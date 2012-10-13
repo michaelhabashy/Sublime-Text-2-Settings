@@ -1,0 +1,21 @@
+{
+	"auto_upgrade_last_run": 1350109047,
+	"installed_packages":
+	[
+		"CoffeeScript",
+		"Origami",
+		"Package Control",
+		"Rails Related Files",
+		"Ruby Slim",
+		"Sass",
+		"SCSS",
+		"SideBarEnhancements",
+		"Theme - Nil"
+	],
+	"repositories":
+	[
+		"https://github.com/sergeche/emmet-sublime",
+		"https://github.com/nilium/st2-nil-theme.git",
+		"https://github.com/nilium/st2-nil-theme.git"
+	]
+}
