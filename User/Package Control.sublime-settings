@@ -1,9 +1,11 @@
 {
-	"auto_upgrade_last_run": 1350113436,
+	"auto_upgrade_last_run": 1350794805,
 	"installed_packages":
 	[
 		"CoffeeScript",
 		"DetectSyntax",
+		"jQuery",
+		"jQuery Snippets pack",
 		"Origami",
 		"Package Control",
 		"Rails Related Files",

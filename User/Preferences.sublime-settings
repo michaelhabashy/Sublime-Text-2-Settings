@@ -1,10 +1,13 @@
 {
-  // "color_scheme": "Packages/Color Scheme - User/Monokai.tmTheme",
 	"color_scheme": "Packages/Theme - Nil/Tubnil.tmTheme",
 	"font_face": "Meslo LG S DZ",
 	"font_size": 13.0,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
 	"tab_size": 2,
+	"theme": "Nil.sublime-theme",
 	"translate_tabs_to_spaces": true,
-	"word_wrap": true,
-  "theme": "Nil.sublime-theme"
+	"word_wrap": true
 }
