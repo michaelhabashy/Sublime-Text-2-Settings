@@ -6,6 +6,8 @@
 		"DetectSyntax",
 		"jQuery",
 		"jQuery Snippets pack",
+		"Markdown Preview",
+		"MarkdownEditing",
 		"Origami",
 		"Package Control",
 		"Rails Related Files",
@@ -13,7 +15,8 @@
 		"Sass",
 		"SCSS",
 		"SideBarEnhancements",
-		"Theme - Nil"
+		"Theme - Nil",
+		"Theme - Soda"
 	],
 	"repositories":
 	[
