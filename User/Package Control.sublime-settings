@@ -1,9 +1,10 @@
 {
-	"auto_upgrade_last_run": 1353211166,
+	"auto_upgrade_last_run": 1353228893,
 	"installed_packages":
 	[
 		"CoffeeScript",
 		"DetectSyntax",
+		"Emmet",
 		"jQuery",
 		"jQuery Snippets pack",
 		"Markdown Preview",
