@@ -1,5 +1,5 @@
 {
-	"auto_upgrade_last_run": 1353228893,
+	"auto_upgrade_last_run": 1353482165,
 	"installed_packages":
 	[
 		"CoffeeScript",
@@ -21,7 +21,6 @@
 	"repositories":
 	[
 		"https://github.com/sergeche/emmet-sublime",
-		"https://github.com/nilium/st2-nil-theme.git",
 		"https://github.com/nilium/st2-nil-theme.git"
 	]
 }
