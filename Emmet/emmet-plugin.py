@@ -316,6 +316,16 @@ class TabExpandHandler(sublime_plugin.EventListener):
 		return run_action(lambda i, sel: ctx.js().locals.pyRunAction('expand_abbreviation'))
 
 	def on_query_completions(self, view, prefix, locations):
+		if view.match_selector(locations[0], "source.css - meta.selector.css - meta.property-value.css") and check_context():
+			l = []
+			if settings.get('show_css_completions', False):
+				completions = ctx.js().locals.pyGetCSSCompletions('css')
+				if completions:
+					for p in completions:
+						l.append(('%s\t%s' % (p['k'], p['label']), p['v']))
+
+			return (l, sublime.INHIBIT_WORD_COMPLETIONS | sublime.INHIBIT_EXPLICIT_COMPLETIONS)
+
 		if ( not self.correct_syntax(view) or
 			 settings.get('disable_completions', False) ): return []
 
@@ -481,13 +491,13 @@ class HandleEnterKey(sublime_plugin.TextCommand):
 		elif 'source.' not in scope:
 			# checking a special case: caret right after opening tag,
 			# but not exactly between pairs
-			if view.substr(sublime.Region(caret_pos - 1, caret_pos)) == '>':
-				line_range = view.line(caret_pos)
-				line = view.substr(sublime.Region(line_range.begin(), caret_pos)) or ''
-				m = re.search(r'<(\w+\:?[\w\-]*)(?:\s+[\w\:\-]+\s*=\s*([\'"]).*?\1)*\s*>$', line)
-				if m and m.group(1).lower() not in settings.get('empty_elements', '').split():
-					snippet = '\n\t${0}'
+			line_range = view.line(caret_pos)
+			line = view.substr(sublime.Region(line_range.begin(), caret_pos)) or ''
 
+			m = re.search(r'<(\w+\:?[\w\-]*)(?:\s+[\w\:\-]+\s*=\s*([\'"]).*?\2)*\s*>\s*$', line)
+			if m and m.group(1).lower() not in settings.get('empty_elements', '').split():
+				snippet = '\n\t${0}'
+		
 		view.run_command('insert_snippet', {'contents': snippet})
 
 
