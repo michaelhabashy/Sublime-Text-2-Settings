@@ -1,6 +1,6 @@
 <snippet>
   <content><![CDATA[
-querySelector('${1:}')
+querySelector( '${1:}' )
 ]]></content>
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
   <!-- <tabTrigger>hello</tabTrigger> -->
