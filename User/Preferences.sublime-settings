@@ -1,5 +1,6 @@
 {
 	"color_scheme": "Packages/Theme - Nil/Tubnil.tmTheme",
+	"ensure_newline_at_eof_on_save": true,
 	"font_face": "Source Code Pro",
 	"font_size": 15.0,
 	"ignored_packages":
@@ -9,7 +10,6 @@
 	"tab_size": 2,
 	"theme": "Nil.sublime-theme",
 	"translate_tabs_to_spaces": true,
-	"word_wrap": true,
-	"ensure_newline_at_eof_on_save": true,
-  "trim_trailing_white_space_on_save": true
+	"trim_trailing_white_space_on_save": true,
+	"word_wrap": true
 }
