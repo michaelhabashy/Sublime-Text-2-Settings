@@ -11,12 +11,15 @@ BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 PACKAGES_PATH = sublime.packages_path() or os.path.dirname(BASE_PATH)
 # EMMET_GRAMMAR = os.path.join(BASE_PATH, 'Emmet.tmLanguage')
 EMMET_GRAMMAR = 'Packages/%s/Emmet.tmLanguage' % os.path.basename(BASE_PATH)
-sys.path += [BASE_PATH] + [os.path.join(BASE_PATH, f) for f in ['completions', 'emmet']]
+sys.path += [BASE_PATH] + [os.path.join(BASE_PATH, f) for f in ['emmet_completions', 'emmet']]
 
-import completions as cmpl
+
+# import completions as cmpl
 import emmet.pyv8loader as pyv8loader
-from completions.meta import HTML_ELEMENTS_ATTRIBUTES, HTML_ATTRIBUTES_VALUES
+import emmet_completions as cmpl
+from emmet_completions.meta import HTML_ELEMENTS_ATTRIBUTES, HTML_ATTRIBUTES_VALUES
 from emmet.context import Context
+# from emmet.context import js_file_reader as _js_file_reader
 from emmet.pyv8loader import LoaderDelegate
 
 __version__      = '1.1'
@@ -36,6 +39,13 @@ user_settings = None
 
 def is_st3():
 	return sublime.version()[0] == '3'
+
+# def js_file_reader(file_path, use_unicode=True):
+# 	if hasattr(sublime, 'load_resource'):
+# 		rel_path = os.path.relpath(file_path, os.path.dirname(sublime.packages_path()))
+# 		return sublime.load_resource(rel_path)
+
+# 	return _js_file_reader(file_path, use_unicode)
 
 def init():
 	"Init Emmet plugin"
@@ -73,9 +83,9 @@ def init():
 		logger=delegate.log
 	)
 
-	pyv8loader.load(pyv8_paths[1], delegate)
-
 	update_settings()
+
+	pyv8loader.load(pyv8_paths[1], delegate) 
 
 	if settings.get('remove_html_completions', False):
 		sublime.set_timeout(cmpl.remove_html_completions, 2000)
@@ -84,7 +94,10 @@ class SublimeLoaderDelegate(LoaderDelegate):
 	def __init__(self, settings=None):
 
 		if settings is None:
-			settings = user_settings
+			settings = {}
+			for k in ['http_proxy', 'https_proxy', 'timeout']:
+				if user_settings.has(k):
+					settings[k] = user_settings.get(k, None)
 
 		LoaderDelegate.__init__(self, settings)
 		self.state = None
@@ -273,7 +286,22 @@ class ActionContextHandler(sublime_plugin.EventListener):
 		prefix, name = key.split('.')
 		return should_perform_action(name, view)
 
-def run_action(action, view=None):
+def get_edit(view, edit_token=None):
+	edit = None
+	try:
+		edit = view.begin_edit()
+	except:
+		pass
+
+	if not edit and edit_token:
+		try:
+			edit = view.begin_edit(edit_token, 'Emmet')
+		except Exception as e:
+			pass
+
+	return edit
+
+def run_action(action, view=None, edit_token=None):
 	if not check_context(True):
 		return
 
@@ -286,6 +314,7 @@ def run_action(action, view=None):
 	r = ctx.js().locals.pyRunAction
 	result = False
 
+	edit = get_edit(view, edit_token)
 	max_sel_ix = len(sels) - 1
 
 	try:
@@ -312,6 +341,8 @@ def run_action(action, view=None):
 
 	view.erase_regions(region_key)
 
+	if edit:
+		view.end_edit(edit)
 	return result
 
 class TabAndCompletionsHandler():
@@ -437,10 +468,10 @@ class TabExpandHandler(sublime_plugin.EventListener):
 		
 
 class CommandsAsYouTypeBase(sublime_plugin.TextCommand):
-	history = {}
 	filter_input = lambda s, i: i
 	selection = ''
 	grammar = EMMET_GRAMMAR
+	edit_token = None
 
 	def setup(self):
 		pass
@@ -473,11 +504,15 @@ class CommandsAsYouTypeBase(sublime_plugin.TextCommand):
 
 	def _real_insert(self, abbr):
 		view = self.view
+		self.edit = get_edit(view, self.edit_token)
 		cmd_input = self.filter_input(abbr) or ''
 		try:
 			self.erase = self.run_command(view, cmd_input) is not False
 		except:
 			pass
+
+		if self.edit:
+			view.end_edit(self.edit)
 
 	def undo(self):
 		if self.erase:
@@ -500,6 +535,9 @@ class CommandsAsYouTypeBase(sublime_plugin.TextCommand):
 		self.edit = edit
 		self.setup()
 		self.erase = False
+
+		if hasattr(edit, 'edit_token'):
+			self.edit_token = edit.edit_token
 
 		panel = self.view.window().show_input_panel (
 			self.input_message, self.default_input, None, self.insert, self.undo )
@@ -539,6 +577,7 @@ class WrapAsYouType(CommandsAsYouTypeBase):
 	# override method to correctly wrap abbreviations
 	def _real_insert(self, abbr):
 		view = self.view
+		self.edit = get_edit(view, self.edit_token)
 
 		self.erase = True
 
@@ -556,7 +595,9 @@ class WrapAsYouType(CommandsAsYouTypeBase):
 
 			self.run_command(view, self._prev_output)
 
-		run_action(ins, view)
+		run_action(ins, view, self.edit_token)
+		if self.edit:
+			view.end_edit(self.edit)
 
 class ExpandAsYouType(WrapAsYouType):
 	default_input = 'div'
