@@ -1,8 +1,8 @@
 !!! 5
-- var em_sometext = "<em>some text</em>"
--var var2 = 'no spaces after -'
+- em_sometext = "<em>some text</em>"
+-var2 = 'no spaces after -'
 _test  =  [{abc: "lalal"}]
-name = function() {}
+name = lambda: None
 
 html
   head
@@ -35,14 +35,17 @@ html
     link(rel="stylesheet", href="asdiofjs.css")
 
   body
+    mixin console_log(*args)
+      - print args
+
     mixin lala(abc, lala)
       div.lala-output(style="background-color: #ccc") lala output
         ul
-          li.abc= null + abc
+          li.abc= abc
           li.lala= lala
 
     div mixin long call
-      mixin lala((123+{asdf:(1+1)}), "mixin long call")strong after long mixin use
+      mixin lala(({asdf:(1+1)}), "mixin long call")strong after long mixin use
 
     .test + mixin use
       +lala(123, "mixin + call 1")strong after + mixin use
@@ -63,7 +66,6 @@ html
         asdf:    ab:[this should be text
 
       tstr = 'strong'
-      #{tstr} iterpolated tag name
 
     pre
       em this is inside 'em' tag <br/>
@@ -76,9 +78,6 @@ html
       #{this too
 
     div(style="background-color: #eef") some examples of dot text blocks bellow:
-
-      #{'di' + 'v'}: em.
-        some text block inside tag with interpolated name and subtag
 
       .lol: strong(prop="()(())").
         another block of text, this time the tag has parenthesis inside
@@ -108,9 +107,6 @@ html
           and this will be a text block
           inside a p tag
 
-    #{'d' + 'i' + 'v'}}.
-      em this should be italic because it is not a text block, and start the line with '}.'
-
     p a tag with text ending in dot.
       strong &nbsp;and child tags to show that the dot text block detection is
         em &nbsp;working
@@ -118,82 +114,58 @@ html
     div: div: thisisavar = 'THIS_IS_A_VARIABLE'
       = 'thisisavar is a variable declaration as demonstrated here: ' + thisisavar
 
-    sub2: tag2: -console.log('unbuffered js inside subtag?')
+    sub2: tag2: -console_log('unbuffered js inside subtag?')
 
     p#-tagid.-sdfa tag ids and classes with valid characters
 
-    p this tag has <em>embedded html #{console}</em>
+    p this tag has <em>embedded html #{dict}</em>
 
     textblock.
       <div style="color: red;">
-        <p>this is embedded html in dot text block with a interpolated value: #{'te'+'st'+1}</p>
+        <p>this is embedded html in dot text block with a interpolated value: #{'%s%s%s' % ('te', 'st', 1)}</p>
       </div>
 
     <div style="color: green;">
-    <p>this is directly embedded html with a interpolated value: #{'te'+'st'+2}</p>
+    <p>this is directly embedded html with a interpolated value: #{'te'+'st'+'2'}</p>
     </div>
 
     emb
       div regular tag and text
         | <div style="color: blue;">
-        |   <p>this is embedded html in pipe text with a interpolated value: #{'te'+'st'+2}</p>
+        |   <p>this is embedded html in pipe text with a interpolated value: #{'te'+'st'+'3'}</p>
         | </div>
 
     p: em(sdf-+a\||./asd=123,   type="te\x98t\u8876",lol,
       lol
-      lol, abc = _test, fdg=console.log(123, (1 + (1 + 2)), undefined || true && "sdf#{1+1}asdf")
-      asdf, bcd=[123, [_test, {asdf: console.log(123)}]], afd={a: 1+1, 'b': {c: (null)}}
+      lol, abc = _test, fdg=console_log(123, (1 + (1 + 2)), None or True and "sdf#{'1'*10}asdf")
+      asdf, bcd=[123, [_test, {'asdf': console_log(123)}]], afd={'a': 1+1, 'b': {'c': (None)}}
       style="background-color: #ccc;") this is a tag with all sorts of crazy properties properly highlighted
 
     p(aprop).lol.lil#theid(style="background-color: black; color: white;").lul(anotherprop='TEST')
       | tag with any combination/order of id/classes/attributes
 
-    include page
-
     block testblock1
       div.lala-block this is in testblock1
-      yield
-
-    div.lala-block-test
-      block prepend testblock1
-        div.lala-prepend line1
-        | line2
-
-      append testblock1
-        div.lala-append line1
-        | line2
-        yield
 
     div a list generated in a loop as subtag code:
-      ul: - for i in [1,2,3,null]
+      ul: - for i in [1,2,3,None]
         li= i
 
     div a list generated in another loop as subtag code:
-      ul: for i in [1,2,3,null]
+      ul: for i in [1,2,3,None]
         li= i
 
-    div(style="color: red;"): append testblock1
-
-    div(style="color: green;"): include page
-
-    div(style="color: blue;"): mixin lala
+    div(style="color: blue;"): mixin lala(None, dict)
 
 
-    if true
+    if True
       p conditional text
     else
       p and this won't show
 
-    friends = 10
-    case friends
-      when 0
-        p you have no friends
-      when (1+(1+1)): p you have a friend
-      default: p you have #{friends} friends
-
     h1 title
 
-    p= console.log("logging before text") || 'after console.log'
+    p= console_log("logging before text") or 'after console.log'
 
     #div
       label
@@ -207,7 +179,7 @@ html
       div!= em_sometext
       div= em_sometext
       #test(abc="lala", lele=9, lili=em_sometext) the variable used as property value
-      .class interpolated escaped and unescaped variable: #{em_sometext + "&"} and !{em_sometext}} \#{this will show}
+      .class interpolated escaped and unescaped variable: #{em_sometext + "&"} and !{em_sometext}}
 
     .class.
       line-break on interpolation won't work #{ 1 + (
@@ -234,5 +206,5 @@ html
 
     p
       multi.line tag with pipe lines,
-      | like this first #{em_sometext + "aosidjfsd" + 0 + undefined} ending here.
+      | like this first #{'%s%s%s%s' % (em_sometext, "aosidjfsd", 0, None)} ending here.
       | <br/> more pure text breaking the line with embedded html
