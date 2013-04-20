@@ -7,5 +7,7 @@
 			{ "key": "setting.tab_completion", "operator": "equal", "operand": true }
 		]
 	},
-	{ "keys": ["command+shift+r"], "command": "reindent" }
+	{ "keys": ["command+shift+r"], "command": "reindent" },
+  { "keys": ["super+v"], "command": "paste_and_indent" },
+  { "keys": ["super+shift+v"], "command": "paste" }
 ]
